@@ -1,0 +1,25 @@
+# ClickHouse data directories
+data/
+flags/
+format_schemas/
+metadata/
+metadata_dropped/
+preprocessed_configs/
+store/
+tmp/
+user_files/
+status
+uuid
+
+# Generated data
+*.csv
+
+# LibreChat
+LibreChat/
+
+# Secrets
+.env
+*.env
+
+# macOS
+.DS_Store
