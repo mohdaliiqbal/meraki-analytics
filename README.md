@@ -142,15 +142,52 @@ MEILI_MASTER_KEY=your-random-secret
 
 > **Never commit `.env` to git.** It is already in `.gitignore`.
 
-### (Optional) Customise LibreChat
+### Configure librechat.yaml
 
-Copy the example config and edit to your needs:
+Copy the example config:
 
 ```bash
 cp librechat.example.yaml librechat.yaml
 ```
 
 The config controls available endpoints (OpenAI, Mistral, Groq, etc.), UI settings, registration, and rate limits. See the [LibreChat configuration docs](https://www.librechat.ai/docs/configuration/librechat_yaml) for full reference.
+
+### Connect to ClickHouse via MCP
+
+LibreChat connects to ClickHouse using the [official ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse), which exposes your database as a tool the AI can query.
+
+**Install the MCP server:**
+
+```bash
+pip3 install mcp-clickhouse
+```
+
+**Add the following to your `librechat.yaml`:**
+
+```yaml
+mcpSettings:
+  allowedDomains:
+    - localhost
+
+mcpServers:
+  clickhouse:
+    type: stdio
+    command: python3
+    args:
+      - -m
+      - mcp_clickhouse
+    env:
+      CLICKHOUSE_HOST: localhost
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DATABASE: meraki
+      CLICKHOUSE_SECURE: "false"
+```
+
+> **Note:** The MCP server uses HTTP port `8123`, not the native TCP port `9000`.
+
+The AI will have access to three tools: `list_databases`, `list_tables`, and `run_select_query`.
 
 ### Start LibreChat
 
